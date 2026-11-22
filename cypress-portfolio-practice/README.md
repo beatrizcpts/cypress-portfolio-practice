@@ -1,249 +1,79 @@
-# Cypress Portfolio Practice — QA
+# Cypress Portfolio Practice | QA
 
-Projeto de prática de **testes automatizados End-to-End (E2E)** com Cypress e JavaScript. Foi organizado para você abrir no VS Code, executar, estudar e adaptar para um portfólio de QA.
+Projeto de estudo de **automação de testes E2E com Cypress (JavaScript)**, criado para praticar e documentar o meu percurso em QA.
 
-> **Importante:** os testes usam sites públicos de demonstração. Não use dados reais, cartões reais, senhas pessoais ou sistemas bancários de produção. Os sites podem mudar ou ficar indisponíveis; se um teste falhar por mudança no site, investigue antes de concluir que existe um bug no Cypress ou na aplicação.
+Os testes correm em dois sites de demonstração, feitos para treino:
 
-## 1. O que você vai praticar
+- **SauceDemo** (loja online): https://www.saucedemo.com
+- **ParaBank** (banco online): https://parabank.parasoft.com
 
-### E-commerce — SauceDemo
-Site: https://www.saucedemo.com/
+> Todos os testes usam apenas sites de demonstração e dados fictícios.
 
-- Login com credenciais válidas.
-- Login com senha inválida e validação da mensagem de erro.
-- Adicionar produto ao carrinho.
-- Verificar conteúdo do carrinho.
-- Validar campo obrigatório no checkout.
-- Concluir o fluxo de compra de demonstração.
+## Ferramentas
 
-Credenciais públicas de demonstração usadas neste exercício:
-- Utilizador: `standard_user`
-- Palavra-passe: `secret_sauce`
+- [Cypress](https://www.cypress.io/) 15
+- JavaScript
+- Node.js e npm
+- Visual Studio Code
 
-### Banco demonstrativo — ParaBank
-Site: https://parabank.parasoft.com/parabank/index.htm
+## Como correr o projeto
 
-- Verificar se a página inicial carrega.
-- Verificar se os campos de login aparecem.
-- Tentar login com credenciais inválidas e validar a mensagem.
-
-O exemplo bancário é intencionalmente limitado a uma tentativa de autenticação inválida. Não automatize transferências ou operações financeiras em bancos reais.
-
-## 2. Preparar o ambiente no VS Code
-
-### Pré-requisitos
-1. Instale o **Node.js (versão LTS)**: https://nodejs.org/
-2. Instale o **Visual Studio Code**: https://code.visualstudio.com/
-3. Extraia este ZIP para uma pasta do computador.
-4. Abra o VS Code e escolha **File > Open Folder**. Selecione a pasta `cypress-portfolio-practice`.
-
-### Instalar o Cypress
-No VS Code, abra **Terminal > New Terminal**. Confirme que o terminal está na pasta do projeto e execute:
+**Pré-requisito:** ter o [Node.js](https://nodejs.org) instalado.
 
 ```bash
+# 1. Instalar as dependências
 npm install
-```
 
-O comando instala as dependências indicadas no `package.json`, incluindo o Cypress.
-
-## 3. Executar os testes
-
-### Abrir o Cypress com interface visual
-```bash
+# 2. Abrir o Cypress (modo interativo)
 npm run cy:open
-```
 
-1. Escolha **E2E Testing**.
-2. Escolha um navegador disponível.
-3. Clique em **Start E2E Testing**.
-4. Na lista de testes, abra `ecommerce-saucedemo.cy.js` ou `banking-parabank.cy.js`.
-5. Observe o navegador a executar cada ação e o painel de comandos.
-
-### Executar no terminal (headless)
-```bash
+# 3. Ou correr todos os testes no terminal
 npm run cy:run
 ```
 
-O Cypress executa os testes sem abrir a janela interativa. Os vídeos são guardados em `cypress/videos` e as capturas de falhas em `cypress/screenshots` quando aplicável.
+No modo interativo, escolhe **E2E Testing**, depois o browser, e clica no ficheiro de teste que queres executar.
 
-## 4. Entender a estrutura de um teste
+## Estrutura
 
-Exemplo:
-
-```javascript
-it("deve adicionar um produto ao carrinho", () => {
-  cy.visit("/");
-  cy.get('[data-test="username"]').type("standard_user");
-  cy.get('[data-test="password"]').type("secret_sauce");
-  cy.get('[data-test="login-button"]').click();
-
-  cy.get('[data-test="add-to-cart-sauce-labs-backpack"]').click();
-  cy.get(".shopping_cart_badge").should("have.text", "1");
-});
+```
+cypress/
+  e2e/
+    ecommerce-saucedemo.cy.js   # testes da loja (SauceDemo)
+    banking-parabank.cy.js      # testes do banco (ParaBank)
+  support/
+    e2e.js                      # ficheiro de suporte do Cypress
+evidencias/
+  bug-001.png                   # captura do BUG-001
+cypress.config.js
+package.json
 ```
 
-- `it()` define um cenário de teste.
-- `cy.visit()` abre uma página.
-- `cy.get()` procura um elemento usando um seletor CSS.
-- `.type()` escreve num campo.
-- `.click()` clica num elemento.
-- `.should()` verifica o resultado esperado.
-- `beforeEach()` executa uma preparação antes de cada teste dentro daquele grupo.
+## Casos de teste
 
-Pense no padrão **Arrange – Act – Assert**:
-1. **Arrange (preparar):** abrir a página e preencher os dados necessários.
-2. **Act (agir):** clicar no botão ou executar uma ação.
-3. **Assert (verificar):** confirmar que a aplicação apresentou o resultado esperado.
+### SauceDemo (e-commerce)
 
-## 5. Passo a passo para estudar cada cenário
+| # | Cenário | Resultado |
+|---|---|---|
+| 1 | Login com credenciais válidas | ✅ Passa |
+| 2 | Mensagem de erro com password inválida | ✅ Passa |
+| 3 | Adicionar um produto ao carrinho | ✅ Passa |
+| 4 | Impedir checkout sem preencher os dados obrigatórios | ✅ Passa |
+| 5 | Concluir o checkout com dados válidos | ✅ Passa |
 
-### Teste 1 — Login válido
-**Objetivo:** confirmar que um utilizador válido consegue entrar.
+### ParaBank (banca)
 
-1. Abra o site SauceDemo.
-2. O teste escreve `standard_user` no campo de utilizador.
-3. Escreve `secret_sauce` no campo de palavra-passe.
-4. Clica no botão de login.
-5. Confirma que a URL contém `/inventory.html` e que o título é `Products`.
-
-**Conceitos:** fluxo positivo, autenticação, navegação e asserções.
-
-### Teste 2 — Login inválido
-**Objetivo:** verificar o tratamento de erro.
-
-1. O teste informa um utilizador válido e uma palavra-passe errada.
-2. Clica em login.
-3. Confirma que a mensagem de erro fica visível e contém o texto esperado.
-
-**Conceitos:** fluxo negativo, validação de mensagens e comportamento esperado.
-
-### Teste 3 — Adicionar produto ao carrinho
-**Objetivo:** verificar se a ação altera o estado do carrinho.
-
-1. Faz login.
-2. Clica em **Add to cart** no produto selecionado.
-3. Confirma que o contador do carrinho mostra `1`.
-4. Abre o carrinho.
-5. Confirma que existe um item e que é o produto esperado.
-
-**Conceitos:** interação, estado da aplicação e validação de conteúdo.
-
-### Teste 4 — Campo obrigatório no checkout
-**Objetivo:** confirmar que o sistema valida dados obrigatórios.
-
-1. Faz login e adiciona um produto.
-2. Abre o carrinho e avança para checkout.
-3. Clica em continuar sem preencher os dados.
-4. Confirma a mensagem `First Name is required`.
-
-**Conceitos:** validação de formulário, fluxo negativo e mensagem de feedback.
-
-### Teste 5 — Checkout completo
-**Objetivo:** validar o percurso principal de compra no ambiente de demonstração.
-
-1. Faz login e adiciona um produto.
-2. Avança para checkout.
-3. Preenche nome, apelido e código postal fictícios.
-4. Confirma que o resumo da compra aparece.
-5. Finaliza e verifica a mensagem de confirmação.
-
-**Conceitos:** teste End-to-End, fluxo positivo e confirmação de conclusão.
-
-### Teste 6 — Login inválido no ParaBank
-**Objetivo:** verificar a resposta do formulário de autenticação do banco demonstrativo.
-
-1. Abre a página inicial do ParaBank.
-2. Confirma que os campos de utilizador e palavra-passe estão visíveis.
-3. Preenche credenciais fictícias inválidas.
-4. Clica em **Log In**.
-5. Confirma que a mensagem de erro aparece.
-
-**Conceitos:** validação de formulário, autenticação negativa e feedback ao utilizador.
-
-## 6. Como investigar uma falha
-
-Um teste vermelho não significa automaticamente que existe um bug na aplicação.
-
-1. Leia a mensagem de erro do Cypress e identifique o comando que falhou.
-2. Veja se a página abriu corretamente.
-3. Confirme se o seletor ainda existe no site.
-4. Verifique se o texto ou comportamento da aplicação mudou.
-5. Execute novamente para perceber se a falha é consistente.
-6. Só depois conclua se é defeito da aplicação, instabilidade externa ou problema no próprio teste.
-
-**Dica:** prefira seletores estáveis, como `data-test` ou `data-testid`, quando a aplicação os disponibilizar. Seletores baseados em classes de estilo ou na posição de um elemento podem quebrar com alterações visuais.
-
-## 7. Desafios para evoluir o portfólio
-
-Depois de executar os exemplos, tente implementar estes cenários por conta própria:
-
-1. Remover um produto do carrinho e confirmar que o contador atualiza.
-2. Adicionar dois produtos e validar a quantidade.
-3. Ordenar os produtos por preço crescente e confirmar a ordem.
-4. Validar que o botão de checkout não avança com o formulário incompleto.
-5. Criar um teste para o utilizador bloqueado `locked_out_user` no SauceDemo.
-6. Fazer um teste que confirme que o carrinho está vazio no início de uma sessão.
-7. Criar um caso de teste para validar mensagens de erro com diferentes entradas.
-
-Para cada desafio, escreva primeiro:
-- **Pré-condições:** o que precisa estar preparado?
-- **Passos:** o que o utilizador faz?
-- **Resultado esperado:** o que deve acontecer?
-- **Resultado obtido:** o que aconteceu ao executar?
-
-## 8. Como transformar isto em portfólio
-
-1. Crie um repositório público no GitHub com um nome como `cypress-qa-automation-portfolio`.
-2. Adicione o projeto, o README e os testes.
-3. Não publique credenciais pessoais, tokens, cookies ou dados reais.
-4. Acrescente uma secção com os cenários cobertos e, se possível, um pequeno relatório de execução.
-5. Grave um vídeo curto do Cypress a executar um dos fluxos, sem expor dados privados.
-6. No LinkedIn, apresente o objetivo, os cenários, as ferramentas e o que aprendeu. Identifique claramente que são aplicações demonstrativas e um projeto de estudo.
-
-### Exemplo de texto para LinkedIn
-
-**Praticando automação de testes com Cypress e JavaScript!**
-
-Estou a desenvolver um pequeno projeto de portfólio para aprofundar os meus conhecimentos em testes End-to-End (E2E), utilizando Cypress e Visual Studio Code.
-
-Neste exercício, automatizei cenários em aplicações de demonstração de e-commerce e banca, incluindo:
-- Login com credenciais válidas e inválidas;
-- Validação de mensagens de erro;
-- Adição de produtos ao carrinho;
-- Validação de campos obrigatórios;
-- Fluxo de checkout.
-
-O objetivo foi praticar a estrutura dos testes, seletores, interações e asserções, além de observar a execução automatizada no browser.
-
-Continuo a aprender e a desenvolver as minhas competências em QA e automação de testes.
-
-#QA #QualityAssurance #Cypress #TestAutomation #JavaScript #SoftwareTesting
-
-## 9. Ideias para uma sequência de publicações
-
-- **Post 1 — Primeiro contacto com Cypress:** mostrar o Cypress aberto no VS Code e explicar o que é um teste E2E.
-- **Post 2 — Testes de login:** mostrar um cenário positivo e um negativo, explicando a diferença entre eles.
-- **Post 3 — Testes de e-commerce:** mostrar o produto a ser adicionado ao carrinho e a validação do contador.
-- **Post 4 — Validação de formulários:** explicar por que testar campos obrigatórios é importante para a experiência do utilizador.
-- **Post 5 — O que aprendi:** falar sobre seletores, `cy.get()`, `cy.contains()`, `.click()`, `.type()` e `.should()`.
-
-**Boa prática de portfólio:** não publique apenas uma captura com “teste passou”. Explique o risco que o cenário cobre, o resultado esperado e o que aprendeu ao automatizá-lo.
-
-## 10. Referências oficiais
-
-- Instalação e abertura do Cypress: https://docs.cypress.io/app/get-started/install-cypress
-- Primeiro teste E2E: https://docs.cypress.io/app/end-to-end-testing/writing-your-first-end-to-end-test
-- Organização de testes: https://docs.cypress.io/app/core-concepts/writing-and-organizing-tests
-- Integração com VS Code: https://docs.cypress.io/app/tooling/IDE-integration
-- SauceDemo: https://www.saucedemo.com/
-- ParaBank: https://parabank.parasoft.com/parabank/index.htm
-
+| # | Cenário | Resultado |
+|---|---|---|
+| 1 | Carregar a página inicial e mostrar o formulário de login | ✅ Passa |
+| 2 | Mensagem de erro com credenciais inválidas | ❌ Falha (ver BUG-001) |
+| 3 | Mensagem de erro com o campo username vazio | ✅ Passa |
+| 4 | Mensagem de erro com o campo password vazio | ✅ Passa |
 
 ## Bugs encontrados
 
 ### BUG-001: Login aceita utilizador inexistente
 
-- **Ambiente:** Parabank (site de demonstração), Chrome, Cypress 15.21.2
+- **Ambiente:** ParaBank (site de demonstração), Chrome, Cypress 15
 - **Passos para reproduzir:**
   1. Abrir https://parabank.parasoft.com/parabank/index.htm
   2. Escrever um utilizador que não existe e uma password qualquer
@@ -253,3 +83,19 @@ Continuo a aprender e a desenvolver as minhas competências em QA e automação 
 - **Confirmação:** reproduzido manualmente no browser
 - **Evidência:** `evidencias/bug-001.png`
 - **Teste automatizado:** `cypress/e2e/banking-parabank.cy.js` (teste "deve apresentar uma mensagem ao usar credenciais inválidas")
+
+O teste foi mantido a falhar de propósito, porque documenta o comportamento inesperado observado no site.
+
+## O que aprendi
+
+- Escrever casos de teste com `describe`, `it` e `beforeEach`
+- Localizar elementos com seletores (`data-test`, `name`, classes)
+- Validar resultados com `.should()` e `.and()`
+- Investigar uma falha: confirmar manualmente se o problema é do teste, do ambiente ou do sistema
+- Documentar um bug com passos, resultado esperado, resultado obtido e evidência
+
+## Próximos passos
+
+- Escrever os cenários em Gherkin (Cucumber)
+- Mais testes de API
+- Executar os testes automaticamente com GitHub Actions
